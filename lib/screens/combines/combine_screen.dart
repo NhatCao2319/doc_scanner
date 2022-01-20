@@ -29,6 +29,10 @@ class _CombineScreenState extends State<CombineScreen> {
   @override
   void initState() {
     super.initState();
+    refreshData();
+  }
+
+  void refreshData() {
     final pages = DocumentDataBase.instance
         .readAllPagesById(widget.document.id.toString());
     pages.then((value) {
@@ -155,8 +159,11 @@ class _CombineScreenState extends State<CombineScreen> {
   }
 
   createPDF() async {
+    refreshData();
+    print(_image.length);
     for (var img in _image) {
       final image = pw.MemoryImage(img.readAsBytesSync());
+
       pdf.addPage(pw.Page(
           pageFormat: PdfPageFormat.a4,
           build: (pw.Context contex) {
@@ -166,8 +173,9 @@ class _CombineScreenState extends State<CombineScreen> {
   }
 
   savePDF() async {
-    final dir = await getExternalStorageDirectory();
-    final file = File('${dir!.path}/${widget.document.name}.pdf');
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/${widget.document.name}.pdf');
+    print(file.path);
     await file.writeAsBytes(await pdf.save());
   }
 }

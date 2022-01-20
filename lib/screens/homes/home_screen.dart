@@ -22,9 +22,10 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+const bool a = true;
+
 class _HomeScreenState extends State<HomeScreen> {
   List<Document> docs = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Consumer<DocumentProvider>(
                 builder: (context, value, child) {
                   return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.55.h,
+                    height: MediaQuery.of(context).size.height * 0.45.h,
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (ctx, index) {

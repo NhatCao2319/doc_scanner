@@ -43,7 +43,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
               Flexible(
                 flex: 8,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.65,
                   child: Screenshot(
                     controller: screenshotController,
                     child: Stack(
@@ -52,11 +52,11 @@ class _AddTextScreenState extends State<AddTextScreen> {
                           children: [
                             SizedBox(
                               width: double.maxFinite,
-                              height: MediaQuery.of(context).size.height * 0.7,
+                              height: MediaQuery.of(context).size.height * 0.65,
                               child: Image.file(
                                 File(imgFilePath),
                                 height:
-                                    MediaQuery.of(context).size.height * 0.7,
+                                    MediaQuery.of(context).size.height * 0.65,
                                 width: double.infinity,
                                 fit: BoxFit.contain,
                               ),
