@@ -173,9 +173,18 @@ class _CombineScreenState extends State<CombineScreen> {
   }
 
   savePDF() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/${widget.document.name}.pdf');
-    print(file.path);
-    await file.writeAsBytes(await pdf.save());
+    Directory? dir;
+    File? file;
+
+    if (Platform.isAndroid) {
+      dir = await getExternalStorageDirectory();
+      file = File('${dir!.path}/${widget.document.name}.pdf');
+      if (Platform.isIOS) {
+        dir = await getApplicationSupportDirectory();
+        file = File('${dir.path}/${widget.document.name}.pdf');
+      }
+      await file.writeAsBytes(await pdf.save());
+      print(file.path);
+    }
   }
 }
