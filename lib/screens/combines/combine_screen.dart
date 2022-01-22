@@ -14,6 +14,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../main_screen.dart';
+
 class CombineScreen extends StatefulWidget {
   final Document document;
   const CombineScreen({Key? key, required this.document}) : super(key: key);
@@ -144,7 +146,7 @@ class _CombineScreenState extends State<CombineScreen> {
               createPDF();
               savePDF();
               var newRoute =
-                  MaterialPageRoute(builder: (context) => const HomeScreen());
+                  MaterialPageRoute(builder: (context) => const MainScreen());
               Navigator.pushReplacement(context, newRoute);
             },
             text: "Save",
@@ -160,7 +162,6 @@ class _CombineScreenState extends State<CombineScreen> {
 
   createPDF() async {
     refreshData();
-    print(_image.length);
     for (var img in _image) {
       final image = pw.MemoryImage(img.readAsBytesSync());
 
@@ -179,10 +180,12 @@ class _CombineScreenState extends State<CombineScreen> {
     if (Platform.isAndroid) {
       dir = await getExternalStorageDirectory();
       file = File('${dir!.path}/${widget.document.name}.pdf');
-      if (Platform.isIOS) {
-        dir = await getApplicationSupportDirectory();
-        file = File('${dir.path}/${widget.document.name}.pdf');
-      }
+      await file.writeAsBytes(await pdf.save());
+      print(file.path);
+    }
+    if (Platform.isIOS) {
+      dir = await getApplicationDocumentsDirectory();
+      file = File('${dir.path}/${widget.document.name}.pdf');
       await file.writeAsBytes(await pdf.save());
       print(file.path);
     }

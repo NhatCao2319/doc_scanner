@@ -24,29 +24,32 @@ class _DocumentScreenState extends State<DocumentScreen> {
       body: FutureBuilder(
         future: Provider.of<DocumentProvider>(context, listen: true).getDocs(),
         builder: (context, snapshot) {
-          return Column(
-            children: <Widget>[
-              Consumer<DocumentProvider>(
-                builder: (context, value, child) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.65.h,
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (ctx, index) {
-                        return DocumentItem(
-                          docId: value.docItems[index].id.toString(),
-                          imagePath: 'assets/images/jisoo.jpg',
-                          title: value.docItems[index].name!,
-                          subtitle:
-                              value.docItems[index].createAt!.toIso8601String(),
-                        );
-                      },
-                      itemCount: value.docItems.length,
+          return Consumer<DocumentProvider>(
+            builder: (context, value, child) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.h),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (ctx, index) {
+                          return DocumentItem(
+                            docId: value.docItems[index].id.toString(),
+                            imagePath: 'assets/images/jisoo.jpg',
+                            title: value.docItems[index].name!,
+                            subtitle: value.docItems[index].createAt!
+                                .toIso8601String(),
+                          );
+                        },
+                        itemCount: value.docItems.length,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ],
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
