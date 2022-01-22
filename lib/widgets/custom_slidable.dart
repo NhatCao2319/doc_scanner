@@ -33,7 +33,6 @@ class CustomSlidable extends StatelessWidget {
             onPressed: (_) async {
               await Provider.of<DocumentProvider>(context, listen: false)
                   .deleteDoc(int.parse(docId));
-              print('delete doc');
             },
             backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,

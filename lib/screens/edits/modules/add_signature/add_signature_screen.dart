@@ -81,15 +81,22 @@ class _AddSignatureScreenState extends State<AddSignatureScreen> {
                                           width: 300.h,
                                           height: 200.h,
                                         )
-                                      : ColorFiltered(
-                                          colorFilter: ColorFilter.matrix(
-                                              FILTERS[currentFilter]
-                                                  .filterMatrix),
-                                          child: Image.file(
-                                            File(imgWithSigPath!),
-                                            fit: BoxFit.contain,
-                                            width: 100.w,
-                                            height: 100.w,
+                                      : GestureDetector(
+                                          onLongPress: () {
+                                            setState(() {
+                                              imgWithSigPath = '';
+                                            });
+                                          },
+                                          child: ColorFiltered(
+                                            colorFilter: ColorFilter.matrix(
+                                                FILTERS[currentFilter]
+                                                    .filterMatrix),
+                                            child: Image.file(
+                                              File(imgWithSigPath!),
+                                              fit: BoxFit.contain,
+                                              width: 100.w,
+                                              height: 100.w,
+                                            ),
                                           ),
                                         ),
                                 ),
@@ -287,8 +294,9 @@ class _AddSignatureScreenState extends State<AddSignatureScreen> {
               final appStorage = await getApplicationDocumentsDirectory();
               String fileName =
                   DateTime.now().microsecondsSinceEpoch.toString();
-              final result = screenshotController
-                  .captureAndSave(appStorage.path, fileName: fileName);
+              final result = screenshotController.captureAndSave(
+                  '${appStorage.path}/images/',
+                  fileName: fileName);
               await result.then((value) => {imgPath = value!});
               Navigator.pop(context, imgPath);
             },

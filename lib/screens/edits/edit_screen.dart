@@ -178,7 +178,7 @@ class _EditScreenState extends State<EditScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
           child: GFButton(
             onPressed: () async {
-              String imgPath = await ScreenCap();
+              String imgPath = await screenCap();
               setState(() {
                 imgFile = imgPath;
               });
@@ -186,7 +186,7 @@ class _EditScreenState extends State<EditScreen> {
               if (widget.document == null) {
                 Future<Document> result =
                     Provider.of<DocumentProvider>(context, listen: false)
-                        .createDoc("Doc ${DateTime.now()}", DateTime.now());
+                        .createDoc("Doc${DateTime.now()}", DateTime.now());
                 result.then((value) {
                   Provider.of<DocumentProvider>(context, listen: false)
                       .createPage(value.id.toString(), imgFile);
@@ -279,7 +279,7 @@ class _EditScreenState extends State<EditScreen> {
         });
         switch (index) {
           case 0:
-            String imgPath = await ScreenCap();
+            String imgPath = await screenCap();
 
             final imgWithAddText = await Navigator.push(
                 context,
@@ -305,7 +305,7 @@ class _EditScreenState extends State<EditScreen> {
             isShow = false;
             break;
           case 3:
-            String imgPath = await ScreenCap();
+            String imgPath = await screenCap();
             final imgWithSignature = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -322,12 +322,12 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
-  Future<String> ScreenCap() async {
+  Future<String> screenCap() async {
     late String imgPath;
     final appStorage = await getApplicationDocumentsDirectory();
     String fileName = DateTime.now().microsecondsSinceEpoch.toString();
-    final result = screenshotController.captureAndSave(appStorage.path,
-        delay: const Duration(milliseconds: 10), fileName: fileName);
+    final result = screenshotController
+        .captureAndSave('${appStorage.path}/images/', fileName: fileName);
     await result.then((value) => {imgPath = value!});
     return imgPath;
   }

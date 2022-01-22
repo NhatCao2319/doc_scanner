@@ -80,7 +80,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                                     valueText ?? "Tap to change your text",
                                     style: TextStyle(
                                       fontSize: 18.sp,
-                                      color: COLORS_LIST[currentColor].color,
+                                      color: colorList[currentColor].color,
                                     ),
                                   ),
                                 ),
@@ -114,10 +114,10 @@ class _AddTextScreenState extends State<AddTextScreen> {
                                     currentColor = index;
                                   });
                                 },
-                                child: COLORS_LIST[index].widget);
+                                child: colorList[index].widget);
                           },
                           scrollDirection: Axis.horizontal,
-                          itemCount: COLORS_LIST.length,
+                          itemCount: colorList.length,
                         ),
                       ),
                     ),
@@ -252,8 +252,9 @@ class _AddTextScreenState extends State<AddTextScreen> {
               final appStorage = await getApplicationDocumentsDirectory();
               String fileName =
                   DateTime.now().microsecondsSinceEpoch.toString();
-              final result = screenshotController
-                  .captureAndSave(appStorage.path, fileName: fileName);
+              final result = screenshotController.captureAndSave(
+                  '${appStorage.path}/images/',
+                  fileName: fileName);
               await result.then((value) => {imgPath = value!});
               Navigator.pop(context, imgPath);
             },

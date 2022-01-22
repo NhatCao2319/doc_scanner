@@ -57,7 +57,6 @@ class DocumentItem extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      print("rename");
                       Provider.of<DocumentProvider>(context, listen: false)
                           .renameDoc(
                         int.parse(docId),

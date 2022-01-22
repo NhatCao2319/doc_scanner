@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-const List<ColorPickModel> COLORS_LIST = [
+const List<ColorPickModel> colorList = [
   ColorPickModel(Colors.black, ColorWidget(color: Colors.black)),
   ColorPickModel(Colors.red, ColorWidget(color: Colors.red)),
   ColorPickModel(Colors.green, ColorWidget(color: Colors.green)),

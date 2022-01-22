@@ -4,7 +4,6 @@ import 'package:document_scanner_app/Models/document.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/db/document_database.dart';
 import 'package:document_scanner_app/screens/edits/edit_screen.dart';
-import 'package:document_scanner_app/screens/homes/home_screen.dart';
 import 'package:edge_detection/edge_detection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,39 +76,24 @@ class _CombineScreenState extends State<CombineScreen> {
               );
             }),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 80.w,
-            child: GFButton(
-              onPressed: () async {
-                String? imagePath = await EdgeDetection.detectEdge;
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditScreen(
-                            document: widget.document, imgPath: imagePath!)));
-              },
-              text: "Add image",
-              textStyle: const TextStyle(fontWeight: FontWeight.w700),
-              color: Colors.pink.shade200,
-              borderShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0.r)),
-            ),
-          ),
-          SizedBox(
-            width: 80.w,
-            child: GFButton(
-              onPressed: () async {},
-              text: "Combine",
-              textStyle: const TextStyle(fontWeight: FontWeight.w700),
-              color: Colors.pink.shade200,
-              borderShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0.r)),
-            ),
-          ),
-        ],
+      floatingActionButton: SizedBox(
+        width: 80.w,
+        child: GFButton(
+          elevation: 4.0,
+          onPressed: () async {
+            String? imagePath = await EdgeDetection.detectEdge;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditScreen(
+                        document: widget.document, imgPath: imagePath!)));
+          },
+          text: "Add image",
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          color: Colors.pink.shade200,
+          borderShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0.r)),
+        ),
       ),
     );
   }
@@ -181,13 +165,11 @@ class _CombineScreenState extends State<CombineScreen> {
       dir = await getExternalStorageDirectory();
       file = File('${dir!.path}/${widget.document.name}.pdf');
       await file.writeAsBytes(await pdf.save());
-      print(file.path);
     }
     if (Platform.isIOS) {
       dir = await getApplicationDocumentsDirectory();
       file = File('${dir.path}/${widget.document.name}.pdf');
       await file.writeAsBytes(await pdf.save());
-      print(file.path);
     }
   }
 }

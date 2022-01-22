@@ -1,8 +1,6 @@
-import 'package:document_scanner_app/Models/doc_page.dart';
 import 'package:document_scanner_app/Models/document.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
-import 'package:document_scanner_app/db/document_database.dart';
 import 'package:document_scanner_app/screens/edits/edit_screen.dart';
 import 'package:document_scanner_app/widgets/custom_appbar.dart';
 import 'package:document_scanner_app/screens/searchs/search_screen.dart';

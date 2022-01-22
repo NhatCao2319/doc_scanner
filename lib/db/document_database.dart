@@ -55,7 +55,6 @@ CREATE TABLE $tablePages (
     final db = await instance.database;
     final id = await db.insert(tablePages, page.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print("created ${page.pagePath}");
     return page.copy(id: id);
   }
 
