@@ -31,7 +31,7 @@ class ColorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
       child: Container(
         height: 30.h,
         width: 30.h,
@@ -39,8 +39,8 @@ class ColorWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(100.r),
           color: color,
           border: Border.all(
-            width: 3,
-            color: Colors.grey,
+            width: 2,
+            color: Colors.grey.shade500,
           ),
         ),
       ),

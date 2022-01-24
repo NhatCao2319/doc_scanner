@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:document_scanner_app/Models/doc_page.dart';
 import 'package:document_scanner_app/Models/document.dart';
+import 'package:document_scanner_app/Providers/document_provider.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/db/document_database.dart';
 import 'package:document_scanner_app/screens/edits/edit_screen.dart';
@@ -12,8 +13,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import '../main_screen.dart';
+import 'package:provider/provider.dart';
 
 class CombineScreen extends StatefulWidget {
   final Document document;
@@ -24,6 +24,7 @@ class CombineScreen extends StatefulWidget {
 }
 
 class _CombineScreenState extends State<CombineScreen> {
+  int counter = 0;
   List<DocPage> list = [];
   final pdf = pw.Document();
   List<File> _image = [];
@@ -38,6 +39,9 @@ class _CombineScreenState extends State<CombineScreen> {
         .readAllPagesById(widget.document.id.toString());
     pages.then((value) {
       setState(() {
+        if (list.isNotEmpty) {
+          list.clear();
+        }
         list.addAll(value);
       });
     });
@@ -62,15 +66,30 @@ class _CombineScreenState extends State<CombineScreen> {
                 mainAxisSpacing: 20),
             itemCount: list.length,
             itemBuilder: (BuildContext ctx, index) {
-              return Card(
-                elevation: 8.0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.r)),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4.r),
-                  child: Image.file(
-                    File(list[index].pagePath!),
-                    fit: BoxFit.cover,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => EditScreen(
+                                document: widget.document,
+                                docPage: list[index],
+                                imgPath: list[index].pagePath!,
+                              )));
+                },
+                onLongPress: () {
+                  showDeleteDialog(context, index);
+                },
+                child: Card(
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.r)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4.r),
+                    child: Image.file(
+                      File(list[index].pagePath!),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               );
@@ -121,19 +140,22 @@ class _CombineScreenState extends State<CombineScreen> {
       ),
       elevation: 0.4,
       backgroundColor: Colors.grey.shade200,
-      automaticallyImplyLeading: true,
+      automaticallyImplyLeading: false,
       actions: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: GFButton(
-            onPressed: () {
-              createPDF();
-              savePDF();
-              var newRoute =
-                  MaterialPageRoute(builder: (context) => const MainScreen());
-              Navigator.pushReplacement(context, newRoute);
+            onPressed: () async {
+              if (counter <= 0) {
+                setState(() {
+                  counter++;
+                });
+                await createPDF();
+                await savePDF();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
             },
-            text: "Save",
+            text: "Create",
             textStyle: const TextStyle(fontWeight: FontWeight.w700),
             color: Colors.pink.shade200,
             borderShape: RoundedRectangleBorder(
@@ -165,11 +187,64 @@ class _CombineScreenState extends State<CombineScreen> {
       dir = await getExternalStorageDirectory();
       file = File('${dir!.path}/${widget.document.name}.pdf');
       await file.writeAsBytes(await pdf.save());
+
+      await Provider.of<DocumentProvider>(context, listen: false)
+          .updateDocPath(int.parse(widget.document.id.toString()), file.path);
     }
     if (Platform.isIOS) {
       dir = await getApplicationDocumentsDirectory();
       file = File('${dir.path}/${widget.document.name}.pdf');
       await file.writeAsBytes(await pdf.save());
+
+      await Provider.of<DocumentProvider>(context, listen: false)
+          .updateDocPath(int.parse(widget.document.id.toString()), file.path);
     }
+  }
+
+  Future<void> showDeleteDialog(BuildContext context, int index) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.symmetric(horizontal: 20.w),
+            title: const Text('Remove Page'),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            content: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: const Text('Are you sure to remove this page ?'),
+            ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GFButton(
+                    elevation: 3.0,
+                    onPressed: () {
+                      DocumentDataBase.instance.deletePage(list[index].id!);
+                      refreshData();
+                      Navigator.pop(context);
+                    },
+                    text: "Yes",
+                    color: Colors.pink.shade300,
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  GFButton(
+                    elevation: 3.0,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    text: "No",
+                    color: Colors.pink.shade200,
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

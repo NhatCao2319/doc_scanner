@@ -1,7 +1,9 @@
 import 'package:document_scanner_app/Providers/document_provider.dart';
+import 'package:document_scanner_app/db/document_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomSlidable extends StatelessWidget {
   final String docId;
@@ -23,7 +25,11 @@ class CustomSlidable extends StatelessWidget {
         motion: const BehindMotion(),
         children: [
           SlidableAction(
-            onPressed: (_) {},
+            onPressed: (_) async {
+              final doc = await DocumentDataBase.instance
+                  .readDocument(int.parse(docId));
+              Share.shareFiles([doc.docPath!], text: 'Share  PDF File');
+            },
             backgroundColor: const Color(0xFF21B7CA),
             foregroundColor: Colors.white,
             icon: Icons.share,

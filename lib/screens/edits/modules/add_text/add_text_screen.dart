@@ -20,6 +20,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
   final TextEditingController _textFieldController = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
   late String imgFilePath;
+  double currentOpacityValue = 1.0;
   int currentColor = 0;
   String? valueText;
   double rotateNum = 0;
@@ -76,11 +77,14 @@ class _AddTextScreenState extends State<AddTextScreen> {
                                 child: RotationTransition(
                                   turns:
                                       AlwaysStoppedAnimation(rotateNum / 360),
-                                  child: Text(
-                                    valueText ?? "Tap to change your text",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: colorList[currentColor].color,
+                                  child: Opacity(
+                                    opacity: currentOpacityValue,
+                                    child: Text(
+                                      valueText ?? "Tap to change your text",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: colorList[currentColor].color,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -101,7 +105,8 @@ class _AddTextScreenState extends State<AddTextScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0.w),
+                      padding:
+                          EdgeInsets.only(left: 10.0.w, right: 10.w, top: 15.h),
                       child: SizedBox(
                         width: double.infinity,
                         height: 30.h,
@@ -122,19 +127,16 @@ class _AddTextScreenState extends State<AddTextScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      padding: EdgeInsets.only(right: 13.w, left: 13.w),
                       child: Row(
                         children: [
-                          Text(
-                            "Rotate",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          const Icon(
+                            Icons.rotate_right_sharp,
+                            color: Colors.grey,
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 22.h,
+                            width: MediaQuery.of(context).size.width * 0.85,
                             child: Slider.adaptive(
                                 thumbColor: Colors.pink,
                                 activeColor: Colors.pink.shade200,
@@ -145,6 +147,33 @@ class _AddTextScreenState extends State<AddTextScreen> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     rotateNum = newValue;
+                                  });
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 13.w, left: 13.w),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.opacity_outlined,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            height: 22.h,
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: Slider.adaptive(
+                                thumbColor: Colors.pink,
+                                activeColor: Colors.pink.shade200,
+                                inactiveColor: Colors.grey.shade300,
+                                value: currentOpacityValue,
+                                min: 0,
+                                max: 1,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    currentOpacityValue = newValue;
                                   });
                                 }),
                           ),

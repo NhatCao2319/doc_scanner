@@ -1,5 +1,7 @@
+import 'package:document_scanner_app/Models/doc_page.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
+import 'package:document_scanner_app/db/document_database.dart';
 import 'package:document_scanner_app/widgets/custom_appbar.dart';
 import 'package:document_scanner_app/screens/searchs/search_screen.dart';
 import 'package:document_scanner_app/widgets/document_item.dart';
@@ -16,42 +18,57 @@ class DocumentScreen extends StatefulWidget {
 }
 
 class _DocumentScreenState extends State<DocumentScreen> {
+  List<DocPage> list = [];
+
+  void getAllPages() {
+    final l = Provider.of<DocumentProvider>(context).getAllPages();
+    l.then((value) => {
+          setState(() {
+            if (list.isNotEmpty) {
+              list.clear();
+            }
+            list.addAll(value);
+          })
+        });
+  }
+
+  String getFirstPage(String docId) {
+    List<DocPage> pages = [];
+    for (DocPage page in list) {
+      if (page.documentId == docId) {
+        pages.add(page);
+      }
+    }
+    if (pages.isNotEmpty) {
+      return pages[0].pagePath!;
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    getAllPages();
+    final docs = Provider.of<DocumentProvider>(context).docItems;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: buildAppbar(context),
-      body: FutureBuilder(
-        future: Provider.of<DocumentProvider>(context, listen: true).getDocs(),
-        builder: (context, snapshot) {
-          return Consumer<DocumentProvider>(
-            builder: (context, value, child) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.h),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (ctx, index) {
-                          return DocumentItem(
-                            docId: value.docItems[index].id.toString(),
-                            imagePath: 'assets/images/jisoo.jpg',
-                            title: value.docItems[index].name!,
-                            subtitle: value.docItems[index].createAt!
-                                .toIso8601String(),
-                          );
-                        },
-                        itemCount: value.docItems.length,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return DocumentItem(
+                  docId: docs[index].id.toString(),
+                  imagePath: getFirstPage(docs[index].id.toString()),
+                  title: docs[index].name!,
+                  subtitle: docs[index].createAt!.toIso8601String(),
+                );
+              },
+              itemCount: docs.length,
+            ),
+          ),
+        ],
       ),
     );
   }

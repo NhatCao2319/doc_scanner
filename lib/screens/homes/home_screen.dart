@@ -1,6 +1,6 @@
-import 'package:document_scanner_app/Models/document.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
+import 'package:document_scanner_app/screens/combines/combine_screen.dart';
 import 'package:document_scanner_app/screens/edits/edit_screen.dart';
 import 'package:document_scanner_app/widgets/custom_appbar.dart';
 import 'package:document_scanner_app/screens/searchs/search_screen.dart';
@@ -14,6 +14,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 
+import 'document_home_item.dart';
+
 class HomeScreen extends StatefulWidget {
   static const routeName = '/HomeScreen';
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,14 +25,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Document> docs = [];
+  // String getFirstPage(String docId) {
+  //   for (DocPage page in allPages) {
+  //     if (page.documentId == docId) {
+  //       pagesOfDoc.add(page);
+  //     }
+  //   }
+  //   if (pagesOfDoc.isNotEmpty) {
+  //     return pagesOfDoc[0].pagePath!;
+  //   }
+  //   return '';
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: buildAppbar(context),
       body: FutureBuilder(
-        future: Provider.of<DocumentProvider>(context, listen: true).getDocs(),
+        future: Provider.of<DocumentProvider>(context).getDocs(),
         builder: (context, snapshot) {
           return Column(
             children: <Widget>[
@@ -45,12 +58,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (ctx, index) {
-                        return DocumentItem(
-                          docId: value.docItems[index].id.toString(),
-                          imagePath: 'assets/images/jisoo.jpg',
-                          title: value.docItems[index].name!,
-                          subtitle:
-                              value.docItems[index].createAt!.toIso8601String(),
+                        return GestureDetector(
+                          onTap: () {
+                            pushNewScreen(
+                              context,
+                              screen: CombineScreen(
+                                  document: value.docItems[index]),
+                              withNavBar: false,
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
+                            );
+                          },
+                          child: DocumentHomeItem(
+                            docId: value.docItems[index].id.toString(),
+                            imagePath: 'assets/images/pdf_icon2.png',
+                            title: value.docItems[index].name!,
+                            subtitle: value.docItems[index].createAt!
+                                .toIso8601String(),
+                          ),
                         );
                       },
                       itemCount: value.docItems.length,
@@ -97,12 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // ignore: prefer_const_literals_to_create_immutables
           children: [
             GestureDetector(
-              onTap: () async {
-                Provider.of<DocumentProvider>(context, listen: false).createDoc(
-                  "Doc 2",
-                  DateTime.now(),
-                );
-              },
+              onTap: () async {},
               child: const AppWidget(
                   icon: Icon(
                     Icons.qr_code_rounded,

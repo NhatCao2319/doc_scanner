@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:document_scanner_app/Models/doc_page.dart';
 import 'package:document_scanner_app/Models/document.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
 import 'package:document_scanner_app/const/photo_filter.dart';
@@ -17,9 +18,11 @@ import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 class EditScreen extends StatefulWidget {
+  final DocPage? docPage;
   final Document? document;
   final String imgPath;
-  const EditScreen({Key? key, required this.imgPath, this.document})
+  const EditScreen(
+      {Key? key, required this.imgPath, this.document, this.docPage})
       : super(key: key);
 
   @override
@@ -155,7 +158,20 @@ class _EditScreenState extends State<EditScreen> {
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       centerTitle: true,
       leading: IconButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          if (widget.document == null) {
+            Navigator.of(context).pop();
+            return;
+          }
+          if (widget.document != null && widget.docPage != null) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CombineScreen(document: widget.document!)));
+            return;
+          }
+        },
         icon: const Icon(
           Icons.chevron_left_rounded,
           size: 30,
@@ -182,7 +198,20 @@ class _EditScreenState extends State<EditScreen> {
               setState(() {
                 imgFile = imgPath;
               });
-
+              if (widget.docPage != null) {
+                var page = DocPage(
+                    id: widget.docPage!.id,
+                    documentId: widget.docPage!.documentId,
+                    pagePath: imgFile);
+                await Provider.of<DocumentProvider>(context, listen: false)
+                    .editPage(page);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CombineScreen(document: widget.document!)));
+                return;
+              }
               if (widget.document == null) {
                 Future<Document> result =
                     Provider.of<DocumentProvider>(context, listen: false)
@@ -191,7 +220,7 @@ class _EditScreenState extends State<EditScreen> {
                   Provider.of<DocumentProvider>(context, listen: false)
                       .createPage(value.id.toString(), imgFile);
                   setState(() {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
@@ -201,7 +230,7 @@ class _EditScreenState extends State<EditScreen> {
               } else {
                 Provider.of<DocumentProvider>(context, listen: false)
                     .createPage(widget.document!.id.toString(), imgFile);
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>

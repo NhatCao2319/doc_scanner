@@ -16,8 +16,8 @@ class DocumentProvider with ChangeNotifier {
     return [..._pageItems];
   }
 
-  Future<List<DocPage>> getPagesById(String docId) async {
-    final pages = await dbHelper.readAllPagesById(docId);
+  Future<List<DocPage>> getAllPages() async {
+    final pages = await dbHelper.readAllPages();
     _pageItems = pages;
     notifyListeners();
     return pages;
@@ -35,6 +35,7 @@ class DocumentProvider with ChangeNotifier {
       id: DateTime.now().microsecondsSinceEpoch,
       name: name,
       createAt: createAt,
+      docPath: 'path',
     );
     docItems.add(doc);
     await DocumentDataBase.instance.createDocument(doc);
@@ -50,11 +51,30 @@ class DocumentProvider with ChangeNotifier {
     return page;
   }
 
+  Future<DocPage> editPage(DocPage page) async {
+    pageItems.add(page);
+    await DocumentDataBase.instance.createPage(page);
+    notifyListeners();
+    return page;
+  }
+
   Future renameDoc(int id, String newName) async {
     final doc = _items.firstWhere((doc) => doc.id == id);
     final renameDoc = doc.copy(
         name: newName, createAt: doc.createAt, id: doc.id, pages: doc.pages);
     await dbHelper.updateDocument(renameDoc);
+    notifyListeners();
+  }
+
+  Future updateDocPath(int id, String path) async {
+    final doc = _items.firstWhere((doc) => doc.id == id);
+    final updatedDoc = doc.copy(
+        docPath: path,
+        name: doc.name,
+        createAt: doc.createAt,
+        id: doc.id,
+        pages: doc.pages);
+    await dbHelper.updateDocument(updatedDoc);
     notifyListeners();
   }
 

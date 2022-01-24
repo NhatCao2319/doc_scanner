@@ -8,12 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class DocumentItem extends StatelessWidget {
+class DocumentHomeItem extends StatelessWidget {
   final String docId;
   final String title;
   final String subtitle;
   final String imagePath;
-  const DocumentItem({
+  const DocumentHomeItem({
     Key? key,
     required this.title,
     required this.subtitle,
@@ -47,8 +47,8 @@ class DocumentItem extends StatelessWidget {
                 width: 75.w,
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.r),
-                    child: Image.file(
-                      File(imagePath),
+                    child: Image.asset(
+                      imagePath,
                       fit: BoxFit.cover,
                     )),
               ),

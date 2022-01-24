@@ -29,7 +29,8 @@ class DocumentDataBase {
 CREATE TABLE $tableDocuments (
   ${DocumentFields.id} $idType,
   ${DocumentFields.name} $textType,
-  ${DocumentFields.createAt} $textType
+  ${DocumentFields.createAt} $textType,
+  ${DocumentFields.docPath} $textType
   )
     ''');
 
