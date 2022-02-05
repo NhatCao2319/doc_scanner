@@ -3,6 +3,7 @@ import 'package:document_scanner_app/screens/documents/document_screen.dart';
 import 'package:document_scanner_app/screens/homes/home_screen.dart';
 import 'package:document_scanner_app/screens/main_screen.dart';
 import 'package:document_scanner_app/screens/searchs/search_screen.dart';
+import 'package:document_scanner_app/screens/splashscreen/my_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -18,18 +19,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(360, 640),
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: () => ChangeNotifierProvider.value(
         value: DocumentProvider(),
         child: MaterialApp(
+          builder: (context, widget) {
+            ScreenUtil.setContext(context);
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: widget!,
+            );
+          },
           debugShowCheckedModeBanner: false,
           title: 'Document Scanner',
           theme: ThemeData(
             primaryColor: Colors.white,
           ),
-          initialRoute: '/',
+          home: const MySplash(),
           routes: {
-            '/': (context) => const MainScreen(),
+            '/main_screen': (context) => const MainScreen(),
             '/home_screen': (context) => const HomeScreen(),
             '/document_screen': (context) => const DocumentScreen(),
             '/search_screen': (context) => const SearchScreen(),

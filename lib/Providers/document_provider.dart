@@ -85,8 +85,8 @@ class DocumentProvider with ChangeNotifier {
   }
 
   Future deletePage(int id) async {
-    _items.removeWhere((doc) => doc.id == id);
+    _pageItems.removeWhere((page) => page.id == id);
     notifyListeners();
-    await dbHelper.deleteDocument(id);
+    await dbHelper.deletePage(id);
   }
 }

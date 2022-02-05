@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:document_scanner_app/const/app_corlors.dart';
-import 'package:document_scanner_app/Providers/document_provider.dart';
 import 'package:document_scanner_app/widgets/custom_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DocumentHomeItem extends StatelessWidget {
   final String docId;
@@ -35,8 +31,24 @@ class DocumentHomeItem extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 16.w),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(width: 0.5, color: Colors.grey.shade300),
-              color: Colors.white,
+              border:
+                  Border.all(width: 0.5, color: Colors.black.withOpacity(0.4)),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.blue.shade50,
+                  Colors.blue.shade300.withOpacity(0.5),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade400.withOpacity(0.8),
+                  spreadRadius: 0.5,
+                  blurRadius: 1,
+                  offset: const Offset(1, 3),
+                ),
+              ],
               borderRadius: BorderRadius.circular(18.r)),
           height: 80.h,
           padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
@@ -57,24 +69,20 @@ class DocumentHomeItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Provider.of<DocumentProvider>(context, listen: false)
-                          .renameDoc(
-                        int.parse(docId),
-                        DateTime.now().toString(),
-                      );
-                    },
+                  const Spacer(),
+                  SizedBox(
+                    width: 220.w,
                     child: Text(
                       title,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.appbarText,
                       ),
                     ),
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 10.h),
                   Text(
                     getDateTime(subtitle),
                     style: TextStyle(
@@ -83,6 +91,7 @@ class DocumentHomeItem extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
+                  const Spacer(),
                 ],
               ),
             ],

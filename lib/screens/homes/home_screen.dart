@@ -1,11 +1,13 @@
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
+import 'package:document_scanner_app/screens/apps/image_to_text.dart';
+import 'package:document_scanner_app/screens/apps/qr_generate_screen.dart';
+import 'package:document_scanner_app/screens/apps/qr_scan_screen.dart';
 import 'package:document_scanner_app/screens/combines/combine_screen.dart';
 import 'package:document_scanner_app/screens/edits/edit_screen.dart';
 import 'package:document_scanner_app/widgets/custom_appbar.dart';
 import 'package:document_scanner_app/screens/searchs/search_screen.dart';
 import 'package:document_scanner_app/widgets/app_widget.dart';
-import 'package:document_scanner_app/widgets/document_item.dart';
 import 'package:edge_detection/edge_detection.dart';
 
 import 'package:flutter/material.dart';
@@ -25,18 +27,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // String getFirstPage(String docId) {
-  //   for (DocPage page in allPages) {
-  //     if (page.documentId == docId) {
-  //       pagesOfDoc.add(page);
-  //     }
-  //   }
-  //   if (pagesOfDoc.isNotEmpty) {
-  //     return pagesOfDoc[0].pagePath!;
-  //   }
-  //   return '';
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,31 +45,53 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, value, child) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.45.h,
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (ctx, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            pushNewScreen(
-                              context,
-                              screen: CombineScreen(
-                                  document: value.docItems[index]),
-                              withNavBar: false,
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.cupertino,
-                            );
-                          },
-                          child: DocumentHomeItem(
-                            docId: value.docItems[index].id.toString(),
-                            imagePath: 'assets/images/pdf_icon2.png',
-                            title: value.docItems[index].name!,
-                            subtitle: value.docItems[index].createAt!
-                                .toIso8601String(),
+                    child: value.docItems.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.description_outlined,
+                                size: 100,
+                                color: Colors.blue.shade200,
+                              ),
+                              SizedBox(
+                                height: 12.h,
+                              ),
+                              Text(
+                                'You dont have any document yet !',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (ctx, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  pushNewScreen(
+                                    context,
+                                    screen: CombineScreen(
+                                        document: value.docItems[index]),
+                                    withNavBar: false,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino,
+                                  );
+                                },
+                                child: DocumentHomeItem(
+                                  docId: value.docItems[index].id.toString(),
+                                  imagePath: 'assets/images/pdf_icon2.png',
+                                  title: value.docItems[index].name!,
+                                  subtitle: value.docItems[index].createAt!
+                                      .toIso8601String(),
+                                ),
+                              );
+                            },
+                            itemCount: value.docItems.length,
                           ),
-                        );
-                      },
-                      itemCount: value.docItems.length,
-                    ),
                   );
                 },
               ),
@@ -90,21 +102,29 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            elevation: 1.0,
-            backgroundColor: AppColors.floatingButton,
-            mini: true,
-            child: const Icon(Icons.photo_library_rounded),
-            onPressed: () async {
-              String? imagePath = await EdgeDetection.detectEdge;
-              pushNewScreen(
-                context,
-                screen: EditScreen(imgPath: imagePath!),
-                withNavBar: false,
-                pageTransitionAnimation: PageTransitionAnimation.cupertino,
-              );
-            },
-            heroTag: null,
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: FloatingActionButton(
+              elevation: 4.0,
+              backgroundColor: AppColors.floatingButton,
+              mini: true,
+              child: Icon(
+                Icons.add_a_photo_rounded,
+                color: Colors.white.withOpacity(0.85),
+              ),
+              onPressed: () async {
+                String? imagePath = await EdgeDetection.detectEdge;
+                if (imagePath != null) {
+                  pushNewScreen(
+                    context,
+                    screen: EditScreen(imgPath: imagePath),
+                    withNavBar: false,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  );
+                }
+              },
+              heroTag: null,
+            ),
           ),
         ],
       ),
@@ -122,7 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
           // ignore: prefer_const_literals_to_create_immutables
           children: [
             GestureDetector(
-              onTap: () async {},
+              onTap: () {
+                _displayDialog(context);
+              },
               child: const AppWidget(
                   icon: Icon(
                     Icons.qr_code_rounded,
@@ -130,21 +152,80 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   title: "QR Scan"),
             ),
-            const AppWidget(
-                icon: Icon(
-                  Icons.picture_as_pdf_rounded,
-                  color: AppColors.appbarIcon,
-                ),
-                title: "Pdf Tools"),
-            const AppWidget(
-                icon: Icon(
-                  Icons.text_fields_rounded,
-                  color: AppColors.appbarIcon,
-                ),
-                title: "Image To Text"),
+            GestureDetector(
+              onTap: () {
+                pushNewScreen(
+                  context,
+                  screen: const ImageToTextScreen(),
+                  withNavBar: false,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                );
+              },
+              child: const AppWidget(
+                  icon: Icon(
+                    Icons.text_fields_rounded,
+                    color: AppColors.appbarIcon,
+                  ),
+                  title: "Image To Text"),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  _displayDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Options'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context);
+                pushNewScreen(
+                  context,
+                  screen: const QrScanScreen(),
+                  withNavBar: false,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                );
+              },
+              child: Text(
+                'Scan Qr code',
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14.sp),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0.w),
+              child: const Divider(
+                height: 2,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(
+              height: 5.h,
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context);
+                pushNewScreen(
+                  context,
+                  screen: const QrGenerateScreen(),
+                  withNavBar: false,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                );
+              },
+              child: Text(
+                'Generate Qr code',
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14.sp),
+              ),
+            ),
+          ],
+          elevation: 10,
+          //backgroundColor: Colors.green,
+        );
+      },
     );
   }
 
@@ -153,14 +234,6 @@ class _HomeScreenState extends State<HomeScreen> {
       title: "Document Scanner",
       color: Colors.blue.shade200,
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.document_scanner_outlined,
-            size: 20.h,
-            color: AppColors.appbarIcon,
-          ),
-        ),
         IconButton(
           onPressed: () {
             pushNewScreen(

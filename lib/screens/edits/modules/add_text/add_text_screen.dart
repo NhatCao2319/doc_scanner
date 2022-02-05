@@ -32,6 +32,12 @@ class _AddTextScreenState extends State<AddTextScreen> {
   }
 
   @override
+  void dispose() {
+    _textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,

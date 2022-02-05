@@ -24,14 +24,22 @@ class CombineScreen extends StatefulWidget {
 }
 
 class _CombineScreenState extends State<CombineScreen> {
+  final TextEditingController _textFieldController = TextEditingController();
   int counter = 0;
   List<DocPage> list = [];
   final pdf = pw.Document();
-  List<File> _image = [];
+  final List<File> _image = [];
+  String? currentDocName;
   @override
   void initState() {
     super.initState();
     refreshData();
+  }
+
+  @override
+  void dispose() {
+    _textFieldController.dispose();
+    super.dispose();
   }
 
   void refreshData() {
@@ -96,19 +104,20 @@ class _CombineScreenState extends State<CombineScreen> {
             }),
       ),
       floatingActionButton: SizedBox(
-        width: 80.w,
-        child: GFButton(
-          elevation: 4.0,
+        child: GFIconButton(
+          buttonBoxShadow: true,
+          shape: GFIconButtonShape.circle,
           onPressed: () async {
             String? imagePath = await EdgeDetection.detectEdge;
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditScreen(
-                        document: widget.document, imgPath: imagePath!)));
+            if (imagePath != null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EditScreen(
+                          document: widget.document, imgPath: imagePath)));
+            }
           },
-          text: "Add image",
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          icon: const Icon(Icons.add_a_photo_rounded, color: Colors.white),
           color: Colors.pink.shade200,
           borderShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0.r)),
@@ -120,14 +129,17 @@ class _CombineScreenState extends State<CombineScreen> {
   AppBar buildAppbar(BuildContext context) {
     return AppBar(
       systemOverlayStyle: SystemUiOverlayStyle.dark,
-      title: Text(
-        widget.document.name!,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Colors.black54,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.bold,
-          letterSpacing: -0.5,
+      title: GestureDetector(
+        onTap: () => _displayRenameDialog(context),
+        child: Text(
+          currentDocName ?? widget.document.name!,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
         ),
       ),
       leading: IconButton(
@@ -242,6 +254,72 @@ class _CombineScreenState extends State<CombineScreen> {
                     color: Colors.pink.shade200,
                   ),
                 ],
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> _displayRenameDialog(BuildContext context) async {
+    String nameText = '';
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.symmetric(horizontal: 20.w),
+            title: const Text('Rename'),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            content: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: TextField(
+                autofocus: true,
+                onChanged: (value) {
+                  setState(() {
+                    if (value.replaceAll(' ', '') != "") {
+                      nameText = value;
+                    }
+                  });
+                },
+                controller: _textFieldController,
+                decoration: InputDecoration(
+                  hintText: "Your new name",
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.pink.shade200),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: _textFieldController.clear,
+                    icon: Icon(
+                      Icons.clear,
+                      color: Colors.pink.shade300,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              GFButton(
+                onPressed: () {
+                  setState(() {
+                    if (nameText.replaceAll(' ', '') != "") {
+                      currentDocName = nameText;
+                    } else {
+                      currentDocName = currentDocName;
+                    }
+                  });
+                  Provider.of<DocumentProvider>(context, listen: false)
+                      .renameDoc(
+                    widget.document.id!,
+                    currentDocName!,
+                  );
+                  Navigator.pop(context);
+                },
+                text: "Ok",
+                color: Colors.pink.shade200,
+                fullWidthButton: true,
               ),
             ],
           );

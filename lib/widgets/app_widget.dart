@@ -19,9 +19,18 @@ class AppWidget extends StatelessWidget {
         width: 70.w,
         height: 70.w,
         decoration: BoxDecoration(
-            border: Border.all(width: 0.2, color: Colors.blue),
-            borderRadius: BorderRadius.circular(12.r),
-            color: Colors.white),
+          border: Border.all(width: 0.4, color: Colors.blue),
+          borderRadius: BorderRadius.circular(12.r),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.shade100,
+              spreadRadius: 0.2,
+              blurRadius: 0.5,
+              offset: const Offset(1, 3),
+            ),
+          ],
+        ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
           child: Column(

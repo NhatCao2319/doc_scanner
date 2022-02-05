@@ -1,6 +1,4 @@
-import 'package:document_scanner_app/screens/settings/setting_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 import 'apps/app_screen.dart';
@@ -8,8 +6,6 @@ import 'documents/document_screen.dart';
 import 'homes/home_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  static const routeName = '/';
-
   const MainScreen({Key? key}) : super(key: key);
 
   @override
@@ -22,7 +18,6 @@ class _MainScreenState extends State<MainScreen> {
       const HomeScreen(),
       const DocumentScreen(),
       const ApplicationScreen(),
-      const SettingScreen(),
     ];
   }
 
@@ -44,12 +39,6 @@ class _MainScreenState extends State<MainScreen> {
         icon: const Icon(Icons.apps_rounded),
         title: ("App"),
         activeColorPrimary: Colors.deepPurple,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.settings),
-        title: ("Setting"),
-        activeColorPrimary: Colors.green,
         inactiveColorPrimary: Colors.grey,
       ),
     ];
@@ -74,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
       hideNavigationBarWhenKeyboardShows:
           true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
       decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0.r),
+        borderRadius: BorderRadius.circular(10.0),
         colorBehindNavBar: Colors.white,
       ),
       popAllScreensOnTapOfSelectedTab: true,

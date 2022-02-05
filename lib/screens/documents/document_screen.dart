@@ -1,9 +1,8 @@
 import 'package:document_scanner_app/Models/doc_page.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/Providers/document_provider.dart';
-import 'package:document_scanner_app/db/document_database.dart';
+import 'package:document_scanner_app/screens/pdfview/pdf_view_screen.dart';
 import 'package:document_scanner_app/widgets/custom_appbar.dart';
-import 'package:document_scanner_app/screens/searchs/search_screen.dart';
 import 'package:document_scanner_app/widgets/document_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +18,6 @@ class DocumentScreen extends StatefulWidget {
 
 class _DocumentScreenState extends State<DocumentScreen> {
   List<DocPage> list = [];
-
   void getAllPages() {
     final l = Provider.of<DocumentProvider>(context).getAllPages();
     l.then((value) => {
@@ -55,19 +53,57 @@ class _DocumentScreenState extends State<DocumentScreen> {
       appBar: buildAppbar(context),
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return DocumentItem(
-                  docId: docs[index].id.toString(),
-                  imagePath: getFirstPage(docs[index].id.toString()),
-                  title: docs[index].name!,
-                  subtitle: docs[index].createAt!.toIso8601String(),
-                );
-              },
-              itemCount: docs.length,
-            ),
+          SizedBox(
+            height: 10.h,
           ),
+          docs.isNotEmpty
+              ? Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          pushNewScreen(
+                            context,
+                            screen: PdfViewScreen(document: docs[index]),
+                            withNavBar: false,
+                          );
+                        },
+                        child: DocumentItem(
+                          docId: docs[index].id.toString(),
+                          imagePath: getFirstPage(docs[index].id.toString()),
+                          title: docs[index].name!,
+                          subtitle: docs[index].createAt!.toIso8601String(),
+                        ),
+                      );
+                    },
+                    itemCount: docs.length,
+                  ),
+                )
+              : SizedBox(
+                  height: 400.h,
+                  width: double.maxFinite,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.description_outlined,
+                        size: 100,
+                        color: Colors.pink.shade100,
+                      ),
+                      SizedBox(
+                        height: 12.h,
+                      ),
+                      Text(
+                        'You dont have any document yet !',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
         ],
       ),
     );
@@ -77,31 +113,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
     return CustomAppbar(
       title: "Documents",
       color: Colors.pink.shade200,
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.document_scanner_outlined,
-            size: 20.h,
-            color: AppColors.appbarIcon,
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            pushNewScreen(
-              context,
-              screen: const SearchScreen(),
-              withNavBar: false,
-              pageTransitionAnimation: PageTransitionAnimation.cupertino,
-            );
-          },
-          icon: Icon(
-            Icons.search,
-            size: 20.h,
-            color: AppColors.appbarIcon,
-          ),
-        ),
-      ],
+      actions: const [],
     );
   }
 }

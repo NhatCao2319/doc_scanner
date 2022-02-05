@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "914363237659",
+    "project_id": "documentscanner-ba1fe",
+    "storage_bucket": "documentscanner-ba1fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914363237659:android:f89e38fa50d09deae9bfbe",
+        "android_client_info": {
+          "package_name": "com.example.document_scanner_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914363237659-a7f7kjb9pd5du0psf5mqet3j280tmu68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjWYk8glmP1OkAPXauWVkSs3BxRc0Z3dc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914363237659-a7f7kjb9pd5du0psf5mqet3j280tmu68.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914363237659-jdhsb93egoq2s8dj8ft29s9aabeidu2p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.documentScannerApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -114,7 +114,7 @@ class _EditScreenState extends State<EditScreen> {
                                       color: Colors.grey,
                                     )),
                                     width: 45.w,
-                                    height: 50.w,
+                                    height: 45.w,
                                     child: ClipRRect(
                                       child: ColorFiltered(
                                         colorFilter: ColorFilter.matrix(
