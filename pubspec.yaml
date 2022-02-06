@@ -60,6 +60,7 @@ dependencies:
   url_launcher: ^6.0.18
   gallery_saver: ^2.3.2
   splashscreen:
+  wifi_connector: ^2.0.0
 
 dev_dependencies:
   flutter_test:

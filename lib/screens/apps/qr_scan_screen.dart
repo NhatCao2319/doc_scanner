@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:getwidget/components/button/gf_icon_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wifi_connector/wifi_connector.dart';
 
 class QrScanScreen extends StatefulWidget {
   const QrScanScreen({Key? key}) : super(key: key);
@@ -19,9 +19,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+  String finalWifiName = '';
 
-  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
   @override
   void reassemble() {
     super.reassemble();
@@ -58,7 +57,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     child: Container(
                       width: 300.w,
                       child: Text(
-                        'Result: ${result!.code}',
+                        '${result!.code}',
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -109,15 +108,107 @@ class _QrScanScreenState extends State<QrScanScreen> {
     super.dispose();
   }
 
-  checkingUrlAndLaunch() {
+  checkingUrlAndLaunch() async {
     if (result!.code != null || result!.code != '') {
       if (result!.code!.contains('https') || result!.code!.contains('http')) {
         return launchURL(result!.code!);
+      }
+      if (result!.code!.contains('WIFI') || result!.code!.contains('wifi')) {
+        showOptionsDialog(context);
+        return;
       }
     }
   }
 
   launchURL(String url) async {
     if (!await launch(url)) throw 'Could not launch $url';
+  }
+
+  connectWifi(String data) async {
+    String wifiName = '';
+    String wifiPass = '';
+    final wifiData = data.split(";");
+    for (String data in wifiData) {
+      if (data.contains('S:')) {
+        wifiName = data.substring(data.indexOf('S:') + 2, data.length);
+        setState(() {
+          finalWifiName = wifiName;
+        });
+      }
+      if (data.contains('P:')) {
+        wifiPass = data.substring(data.indexOf('P:') + 2, data.length);
+      }
+    }
+    if (!await WifiConnector.connectToWifi(
+        ssid: wifiName, password: wifiPass)) {
+      throw 'Could not connect to wifi';
+    } else {
+      return;
+    }
+  }
+
+  Future<void> showOptionsDialog(BuildContext context) async {
+    String wifiName = '';
+    final wifiData = result!.code!.split(";");
+    for (String data in wifiData) {
+      if (data.contains('S:')) {
+        wifiName = data.substring(data.indexOf('S:') + 2, data.length);
+        setState(() {
+          finalWifiName = wifiName;
+        });
+      }
+    }
+    String textResult = 'Join Wi-Fi Network\n' '"$finalWifiName"';
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.h),
+            titlePadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 10.h),
+            backgroundColor: Colors.grey.shade400,
+            title: Center(
+                child: Text(
+              textResult,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+              ),
+            )),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
+            insetPadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                          fontSize: 16.sp, color: Colors.blue.shade400),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      connectWifi(result!.code!);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Join',
+                      style: TextStyle(
+                          fontSize: 16.sp, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

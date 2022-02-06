@@ -8,6 +8,7 @@ import 'package:document_scanner_app/widgets/document_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:getwidget/components/button/gf_button.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
@@ -69,21 +70,26 @@ class _SearchScreenState extends State<SearchScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            buttonPadding: EdgeInsets.symmetric(horizontal: 20.w),
-            title: const Text('Open With'),
+            buttonPadding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.h),
+            titlePadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 10.h),
+            title: const Center(
+                child: Text(
+              'Open with',
+              style:
+                  TextStyle(fontWeight: FontWeight.w400, color: Colors.black54),
+            )),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding:
-                EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-            content: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: const Text('Open document as'),
-            ),
+                EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
+            insetPadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
+            actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GFButton(
+                    size: GFSize.SMALL,
                     elevation: 3.0,
                     onPressed: () {
                       Navigator.pop(context);
@@ -100,6 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     width: 10.w,
                   ),
                   GFButton(
+                    size: GFSize.SMALL,
                     elevation: 3.0,
                     onPressed: () {
                       Navigator.pop(context);
