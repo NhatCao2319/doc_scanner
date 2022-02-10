@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:clipboard/clipboard.dart';
 import 'package:document_scanner_app/const/app_corlors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +8,7 @@ import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/components/toast/gf_toast.dart';
 import 'package:getwidget/position/gf_toast_position.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart' as cr;
 
@@ -217,17 +217,14 @@ class _ImageToTextScreenState extends State<ImageToTextScreen> {
                           await _picker.pickImage(source: ImageSource.gallery);
                       if (photo != null) {
                         cropped = await cr.ImageCropper.cropImage(
-                            sourcePath: photo.path,
-                            compressQuality: 100,
-                            maxWidth: 700,
-                            maxHeight: 700,
-                            compressFormat: cr.ImageCompressFormat.jpg,
-                            androidUiSettings: cr.AndroidUiSettings(
-                              toolbarColor: Colors.deepOrange,
-                              toolbarTitle: "Crop Image",
-                              statusBarColor: Colors.deepOrange.shade900,
-                              backgroundColor: Colors.white,
-                            ));
+                          sourcePath: photo.path,
+                          compressQuality: 100,
+                          maxWidth: 700,
+                          maxHeight: 700,
+                          compressFormat: cr.ImageCompressFormat.jpg,
+                          iosUiSettings: iosUiSettings(),
+                          androidUiSettings: androidUiSettings(),
+                        );
                       }
 
                       Navigator.pop(context);
@@ -267,17 +264,14 @@ class _ImageToTextScreenState extends State<ImageToTextScreen> {
                       final XFile? photo =
                           await _picker.pickImage(source: ImageSource.camera);
                       File? cropped = await cr.ImageCropper.cropImage(
-                          sourcePath: photo!.path,
-                          compressQuality: 100,
-                          maxWidth: 700,
-                          maxHeight: 700,
-                          compressFormat: cr.ImageCompressFormat.jpg,
-                          androidUiSettings: cr.AndroidUiSettings(
-                            toolbarColor: Colors.deepOrange,
-                            toolbarTitle: "Crop Image",
-                            statusBarColor: Colors.deepOrange.shade900,
-                            backgroundColor: Colors.white,
-                          ));
+                        sourcePath: photo!.path,
+                        compressQuality: 100,
+                        maxWidth: 700,
+                        maxHeight: 700,
+                        compressFormat: cr.ImageCompressFormat.jpg,
+                        iosUiSettings: iosUiSettings(),
+                        androidUiSettings: androidUiSettings(),
+                      );
                       Navigator.pop(context);
                       if (cropped != null) {
                         setState(() {
@@ -314,6 +308,16 @@ class _ImageToTextScreenState extends State<ImageToTextScreen> {
         });
   }
 
+  static AndroidUiSettings androidUiSettings() => const AndroidUiSettings(
+        toolbarTitle: 'Crop Image',
+        toolbarColor: Colors.red,
+        toolbarWidgetColor: Colors.white,
+        lockAspectRatio: false,
+      );
+
+  static IOSUiSettings iosUiSettings() => const IOSUiSettings(
+        aspectRatioLockEnabled: false,
+      );
   Future<void> showEmptyImageDialog(BuildContext context) async {
     return showDialog(
         context: context,
