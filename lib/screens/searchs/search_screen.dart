@@ -7,7 +7,6 @@ import 'package:document_scanner_app/screens/pdfview/pdf_view_screen.dart';
 import 'package:document_scanner_app/widgets/document_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';

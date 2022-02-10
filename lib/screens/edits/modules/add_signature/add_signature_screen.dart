@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:document_scanner_app/const/app_corlors.dart';
 import 'package:document_scanner_app/const/photo_filter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:image_cropper/image_cropper.dart' as cr;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -273,17 +273,14 @@ class _AddSignatureScreenState extends State<AddSignatureScreen> {
                           await _picker.pickImage(source: ImageSource.gallery);
                       if (photoo != null) {
                         cropped = await cr.ImageCropper.cropImage(
-                            sourcePath: photoo.path,
-                            compressQuality: 100,
-                            maxWidth: 700,
-                            maxHeight: 700,
-                            compressFormat: cr.ImageCompressFormat.jpg,
-                            androidUiSettings: cr.AndroidUiSettings(
-                              toolbarColor: Colors.deepOrange,
-                              toolbarTitle: "Crop Image",
-                              statusBarColor: Colors.deepOrange.shade900,
-                              backgroundColor: Colors.white,
-                            ));
+                          sourcePath: photoo.path,
+                          compressQuality: 100,
+                          maxWidth: 700,
+                          maxHeight: 700,
+                          compressFormat: cr.ImageCompressFormat.jpg,
+                          iosUiSettings: iosUiSettings(),
+                          androidUiSettings: androidUiSettings(),
+                        );
                       }
                       Navigator.pop(context);
                       if (cropped != null) {
@@ -326,17 +323,14 @@ class _AddSignatureScreenState extends State<AddSignatureScreen> {
                           await _picker.pickImage(source: ImageSource.camera);
                       if (photo != null) {
                         cropped = await cr.ImageCropper.cropImage(
-                            sourcePath: photo.path,
-                            compressQuality: 100,
-                            maxWidth: 700,
-                            maxHeight: 700,
-                            compressFormat: cr.ImageCompressFormat.jpg,
-                            androidUiSettings: cr.AndroidUiSettings(
-                              toolbarColor: Colors.deepOrange,
-                              toolbarTitle: "Crop Image",
-                              statusBarColor: Colors.deepOrange.shade900,
-                              backgroundColor: Colors.white,
-                            ));
+                          sourcePath: photo.path,
+                          compressQuality: 100,
+                          maxWidth: 700,
+                          maxHeight: 700,
+                          compressFormat: cr.ImageCompressFormat.jpg,
+                          iosUiSettings: iosUiSettings(),
+                          androidUiSettings: androidUiSettings(),
+                        );
                       }
 
                       Navigator.pop(context);
@@ -423,4 +417,15 @@ class _AddSignatureScreenState extends State<AddSignatureScreen> {
       ],
     );
   }
+
+  static AndroidUiSettings androidUiSettings() => const AndroidUiSettings(
+        toolbarTitle: 'Crop Image',
+        toolbarColor: Colors.red,
+        toolbarWidgetColor: Colors.white,
+        lockAspectRatio: false,
+      );
+
+  static IOSUiSettings iosUiSettings() => const IOSUiSettings(
+        aspectRatioLockEnabled: false,
+      );
 }

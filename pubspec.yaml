@@ -61,6 +61,7 @@ dependencies:
   gallery_saver: ^2.3.2
   splashscreen:
   wifi_connector: ^2.0.0
+  image: ^3.1.1
 
 dev_dependencies:
   flutter_test:
