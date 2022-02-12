@@ -58,14 +58,6 @@ class DocumentItem extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      spreadRadius: 0,
-                      blurRadius: 1,
-                      offset: const Offset(1, 3),
-                    ),
-                  ],
                 ),
                 height: 75.w,
                 width: 75.w,

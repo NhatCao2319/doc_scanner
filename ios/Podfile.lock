@@ -267,6 +267,8 @@ PODS:
   - url_launcher_ios (0.0.1):
     - Flutter
   - WeScan (1.7.0)
+  - wifi_connector (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -284,6 +286,7 @@ DEPENDENCIES:
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - wifi_connector (from `.symlinks/plugins/wifi_connector/ios`)
 
 SPEC REPOS:
   trunk:
@@ -357,6 +360,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  wifi_connector:
+    :path: ".symlinks/plugins/wifi_connector/ios"
 
 SPEC CHECKSUMS:
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
@@ -413,7 +418,8 @@ SPEC CHECKSUMS:
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
   WeScan: fed582f6c38014d529afb5aa9ffd1bad38fc72b7
+  wifi_connector: aa1fed85d30fbe52eb39d1aefe761a36032a581f
 
-PODFILE CHECKSUM: a1ec1f02258deab5b1b4ccc0b4ee6440476d5324
+PODFILE CHECKSUM: 59c539a06cbe31f732fb61c68223793731bb37a6
 
 COCOAPODS: 1.11.2
